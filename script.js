@@ -1,63 +1,84 @@
-// const button = document.querySelector("button");
-// const body = document.body;
-// const container = document.querySelector(".container");
-
-// body.addEventListener("click", () => {
-//   console.log("body");
-// });
-
-// container.addEventListener("click", (event) => {
-//   console.log("container");
-// });
-
-// button.addEventListener("click", (event) => {
-//   event.stopPropagation();
-//   console.log("button");
-// });
-
-// Event Delegation
-
-// const el1 = document.querySelector(".el-1");
-// const el2 = document.querySelector(".el-2");
-// const el3 = document.querySelector(".el-3");
-
-// el1.addEventListener("click", () => {
-//   console.log("el1");
-// });
-
-// el2.addEventListener("click", () => {
-//   console.log("el2");
-// });
-
-// el3.addEventListener("click", () => {
-//   console.log("el3");
-// });
-
-// document.addEventListener("click", (event) => {
-//   if (!event.target) {
-//     return;
-//   }
-//   if (
-//     event.target.matches(".el-1") ||
-//     event.target.matches(".el-2") ||
-//     event.target.matches(".el-3")
-//   ) {
-//     console.log(event.target.textContent);
-//   }
-// });
-
-// More Methods
+const questions = [
+  {
+    question: "What is the capital of France?",
+    options: ["Paris", "London", "Berlin", "Madrid"],
+    answer: "Paris",
+  },
+  {
+    question: "What is the capital of Germany?",
+    options: ["Berlin", "London", "Paris", "Madrid"],
+    answer: "Berlin",
+  },
+  {
+    question: "What is the capital of Italy?",
+    options: ["Rome", "London", "Paris", "Madrid"],
+    answer: "Rome",
+  },
+  {
+    question: "What is the capital of Spain?",
+    options: ["Madrid", "London", "Paris", "Berlin"],
+    answer: "Madrid",
+  },
+];
 
 const container = document.querySelector(".container");
-const child1 = document.querySelector(".child2");
+const submitBtn = document.querySelector(".submit-btn");
+const score = document.querySelector(".score");
 
-const link = document.querySelector(".link");
+let questionIndex = 0;
+let scoreValue = 0;
 
-console.log(container.firstChild);
-console.log(container.firstElementChild);
-console.log(child1.nextSibling);
-console.log(child1.previousElementSibling);
+const renderQuestion = () => {
+  container.innerHTML = "";
+  const currentQuestion = questions[questionIndex];
+  const questionElement = document.createElement("h2");
+  questionElement.textContent = currentQuestion.question;
+  container.appendChild(questionElement);
 
-console.log(child1.closest(".container"));
+  //   container.innerHTML += `
+  //     <div class="options">
+  //     ${currentQuestion.options
+  //       .map((option) => {
+  //         return `
+  //         <input type="radio" name="option" value="${option}">
+  //         <label for="${option}">${option}</label>
+  //       `;
+  //       })
+  //       .join("")}
+  //     </div>
+  //   `;
 
-link.setAttribute("href", "https://www.google.com");
+  currentQuestion.options.forEach((option) => {
+    const optionElement = document.createElement("input");
+    optionElement.type = "radio";
+    optionElement.name = "option";
+    optionElement.value = option;
+    container.appendChild(optionElement);
+
+    const labelElement = document.createElement("label");
+    labelElement.textContent = option;
+    labelElement.htmlFor = option;
+    container.appendChild(labelElement);
+  });
+};
+
+submitBtn.addEventListener("click", () => {
+  const correctAnswer = questions[questionIndex].answer;
+  const selectedAnswer = document.querySelector(
+    "input[type='radio']:checked"
+  ).value;
+  if (correctAnswer === selectedAnswer) {
+    scoreValue++;
+  }
+  score.textContent = `Score: ${scoreValue}`;
+  questionIndex++;
+
+  if (questionIndex < questions.length) {
+    renderQuestion();
+  } else {
+    submitBtn.disabled = true;
+    container.innerHTML = "<h2>You have completed the quiz</h2>";
+  }
+});
+
+renderQuestion();
